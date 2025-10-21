@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:simpleType name="ContextReferenceType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="plain"/>
+            <xsd:enumeration value="keypath"/>
+            <xsd:enumeration value="last"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="pipeline">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="stages" minOccurs="1" maxOccurs="1">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <!-- Stage -->
+                            <xsd:element name="stage" minOccurs="1" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="settings" minOccurs="1" maxOccurs="1">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
+                                                        <xsd:complexType mixed="true">
+                                                            <xsd:choice>
+                                                                <xsd:sequence>
+                                                                    <xsd:element name="item" type="xsd:anyType" minOccurs="0" maxOccurs="unbounded"/>
+                                                                </xsd:sequence>
+                                                            </xsd:choice>
+                                                            <xsd:attribute name="name" type="xsd:string"/>
+                                                            <xsd:attribute name="contextReference" type="ContextReferenceType" use="optional" />
+                                                            <xsd:attribute name="keypath" type="xsd:string" use="optional" />
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                    <!-- stage id attribute -->
+                                    <xsd:attribute name="type" type="xsd:string" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <!-- Stage -->
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <!-- pipeline id attribute -->
+            <xsd:attribute name="id" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

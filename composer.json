@@ -1,0 +1,18 @@
+{
+    "name": "marcosiino/pipeflow",
+    "description": "A pipeline implementation for PHP",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Marcosiino\\Pipeflow\\": "src/Pipeflow/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marco Siino",
+            "email": "siino.marco@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
