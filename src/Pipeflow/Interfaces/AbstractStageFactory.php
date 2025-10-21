@@ -1,8 +1,8 @@
 <?php
-namespace marcosiino\pipeflow\Exceptions;
+namespace Marcosiino\Pipeflow\Interfaces;
 
-use marcosiino\pipeflow\Core\Pipeline\StageDescriptor;
-use marcosiino\pipeflow\Core\Pipeline\StageConfiguration;
+use Marcosiino\Pipeflow\Core\Pipeline\StageDescriptor;
+use Marcosiino\Pipeflow\Core\Pipeline\StageConfiguration;
 
 /**
  * Represents an abstract StageFactory
