@@ -1,8 +1,8 @@
 <?php
-namespace marcosiino\pipeflow;
+namespace Marcosiino\Pipeflow;
 
-use marcosiino\pipeflow\Core\StageFactory;
-use marcosiino\pipeflow\Stages\SetValue\SetValueStageFactory;
+use Marcosiino\Pipeflow\Core\StageFactory;
+use Marcosiino\Pipeflow\Stages\SetValue\SetValueStageFactory;
 
 class PipeFlow
 {
