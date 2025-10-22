@@ -1,10 +1,10 @@
 <?php
-namespace Marcosiino\Pipeflow\Utils\Helpers;
+namespace marcosiino\pipeflow\Utils\Helpers;
 
-use Marcosiino\Pipeflow\Core\Pipeline;
-use Marcosiino\Pipeflow\Core\StageConfiguration\StageConfiguration;
-use Marcosiino\Pipeflow\Core\StageConfiguration\StageSetting;
-use Marcosiino\Pipeflow\Core\StageConfiguration\ReferenceStageSetting;
+use marcosiino\pipeflow\Core\Pipeline;
+use marcosiino\pipeflow\Core\StageConfiguration\StageConfiguration;
+use marcosiino\pipeflow\Core\StageConfiguration\StageSetting;
+use marcosiino\pipeflow\Core\StageConfiguration\ReferenceStageSetting;
 
 
 /**

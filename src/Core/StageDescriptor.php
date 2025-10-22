@@ -1,5 +1,5 @@
 <?php
-namespace Marcosiino\Pipeflow\Core;
+namespace marcosiino\pipeflow\Core;
 
 /**
  * Represents the description of a specific pipeline stage type, with its identifier, inputs and outputs descriptions

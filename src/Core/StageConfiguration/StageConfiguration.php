@@ -1,6 +1,7 @@
 <?php
+namespace Pipeline\Core\StageConfiguration;
 
-namespace Marcosiino\Pipeflow\Core\StageConfiguration;
+use Marcosiino\Pipeflow\Utils\PlaceholderProcessor;
 
 class StageConfiguration
 {

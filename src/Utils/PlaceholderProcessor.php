@@ -1,8 +1,8 @@
 <?php
-namespace Marcosiino\Pipeflow\Utils\Helpers;
+namespace marcosiino\pipeflow\Utils\Helpers;
 
-use Marcosiino\Pipeflow\Core\PipelineContext;
-use Marcosiino\Pipeflow\Utils\Parser\InputParser
+use marcosiino\pipeflow\Core\PipelineContext;
+use marcosiino\pipeflow\Utils\Parser\InputParser
 
 /**
  * Process a string by replacing the placeholders with the context parameters values

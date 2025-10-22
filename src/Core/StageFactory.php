@@ -1,10 +1,10 @@
 <?php
-namespace Marcosiino\Pipeflow\Core;
+namespace marcosiino\pipeflow\Core;
 
-use Marcosiino\Pipeflow\Exceptions\StageConfigurationException;
-use Marcosiino\Pipeflow\Interfaces\AbstractPipelineStage;
-use Marcosiino\Pipeflow\Interfaces\AbstractStageFactory;
-use Marcosiino\Pipeflow\Core\StageConfiguration\StageConfiguration;
+use marcosiino\pipeflow\Exceptions\StageConfigurationException;
+use marcosiino\pipeflow\Interfaces\AbstractPipelineStage;
+use marcosiino\pipeflow\Interfaces\AbstractStageFactory;
+use marcosiino\pipeflow\Core\StageConfiguration\StageConfiguration;
 
 /**
  * A class which allows to instantiate Pipeline Stages given their configuration

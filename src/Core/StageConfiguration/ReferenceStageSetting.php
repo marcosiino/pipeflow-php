@@ -1,6 +1,6 @@
 <?php
 
-namespace Marcosiino\Pipeflow\Core\StageConfiguration;
+namespace Pipeline\Core\StageConfiguration;
 
 class ReferenceStageSetting
 {

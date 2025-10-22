@@ -1,6 +1,5 @@
 <?php
-
-namespace Marcosiino\Pipeflow\Core\StageConfiguration;
+namespace Pipeline\Core\StageConfiguration;
 
 /**
  * Represents a setting parameter for a stage with a fixed value

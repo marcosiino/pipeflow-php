@@ -4,7 +4,7 @@
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Marcosiino\\Pipeflow\\": "src/Pipeflow/"
+            "Marcosiino\\Pipeflow\\": "src/"
         }
     },
     "authors": [

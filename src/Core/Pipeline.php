@@ -1,14 +1,14 @@
 <?php
 
-namespace Marcosiino\Pipeflow\Core;
+namespace marcosiino\pipeflow\Core;
 
-use Marcosiino\Pipeflow\Core\Exceptions\StageExecutionException;
-use Marcosiino\Pipeflow\Core\Exceptions\StageConfigurationException;
-use Marcosiino\Pipeflow\Core\Exceptions\PipelineExecutionException;
-use Marcosiino\Pipeflow\Core\Utils\Helpers;
-use Marcosiino\Pipeflow\Core\Pipeline\Interfaces\AbstractPipelineStage;
-use Marcosiino\Pipeflow\Core\Pipeline\StageFactory;
-use Marcosiino\Pipeflow\Core\Pipeline\Utils\PipelineXMLConfigurator;
+use marcosiino\pipeflow\Core\Exceptions\StageExecutionException;
+use marcosiino\pipeflow\Core\Exceptions\StageConfigurationException;
+use marcosiino\pipeflow\Core\Exceptions\PipelineExecutionException;
+use marcosiino\pipeflow\Core\Utils\Helpers;
+use marcosiino\pipeflow\Core\Pipeline\Interfaces\AbstractPipelineStage;
+use marcosiino\pipeflow\Core\Pipeline\StageFactory;
+use marcosiino\pipeflow\Core\Pipeline\Utils\PipelineXMLConfigurator;
 
 /**
  * Represents a Content Generation Pipeline

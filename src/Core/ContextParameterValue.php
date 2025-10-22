@@ -1,7 +1,5 @@
 <?php
-
 namespace Marcosiino\Pipeflow\Core;
-
 /**
  * Represents a context parameter's value
  */

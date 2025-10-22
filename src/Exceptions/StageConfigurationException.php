@@ -1,5 +1,5 @@
 <?php
-namespace Marcosiino\Pipeflow\Exceptions;
+namespace marcosiino\pipeflow\Exceptions;
 
 class StageConfigurationException extends Exception {
 

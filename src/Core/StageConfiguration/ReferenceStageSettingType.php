@@ -1,5 +1,4 @@
 <?php
-
 namespace Marcosiino\Pipeflow\Core\StageConfiguration;
 
 /**

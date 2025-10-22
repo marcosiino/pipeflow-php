@@ -1,6 +1,6 @@
 <?php
-namespace Marcosiino\Pipeflow\Stages\SetValue;
-use Marcosiino\Pipeflow\Interfaces\AbstractPipelineStage;
+namespace marcosiino\pipeflow\Stages\SetValue;
+use marcosiino\pipeflow\Interfaces\AbstractPipelineStage;
 
 class SetValueStage extends AbstractPipelineStage
 {
