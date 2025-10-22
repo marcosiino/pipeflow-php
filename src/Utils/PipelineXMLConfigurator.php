@@ -1,11 +1,13 @@
 <?php
-namespace marcosiino\pipeflow\Utils\Helpers;
+namespace Marcosiino\Pipeflow\Utils;
 
-use marcosiino\pipeflow\Core\Pipeline;
-use marcosiino\pipeflow\Core\StageConfiguration\StageConfiguration;
-use marcosiino\pipeflow\Core\StageConfiguration\StageSetting;
-use marcosiino\pipeflow\Core\StageConfiguration\ReferenceStageSetting;
-
+use Marcosiino\Pipeflow\Core\Pipeline;
+use Marcosiino\Pipeflow\Core\StageConfiguration\StageConfiguration;
+use Marcosiino\Pipeflow\Core\StageConfiguration\StageSetting;
+use Marcosiino\Pipeflow\Core\StageConfiguration\ReferenceStageSetting;
+use Marcosiino\Pipeflow\Exceptions\StageConfigurationException;
+use Marcosiino\Pipeflow\Core\StageFactory;
+use Marcosiino\Pipeflow\Core\StageConfiguration\ReferenceStageSettingType;
 
 /**
  *
@@ -30,7 +32,7 @@ class PipelineXMLConfigurator
      * @throws StageConfigurationException
      */
     public function configure($xmlConfiguration): bool {
-        $document = new DOMDocument();
+        $document = new \DOMDocument();
         $document->loadXML($xmlConfiguration);
 
         //Validates the xml configuration
@@ -52,7 +54,7 @@ class PipelineXMLConfigurator
     /**
      * @throws StageConfigurationException
      */
-    private function processStage(DOMElement $stage, DOMDocument $document): void
+    private function processStage(\DOMElement $stage, \DOMDocument $document): void
     {
         $stageConfiguration = new StageConfiguration();
 
@@ -101,9 +103,9 @@ class PipelineXMLConfigurator
      * @param array $validationErrors output if validation errors occurs
      * @return bool - Returns true if the document validates successfully, false otherwise
      */
-    private function validateXMLConfiguration(DOMDocument $document, array &$validationErrors): bool {
+    private function validateXMLConfiguration(\DOMDocument $document, array &$validationErrors): bool {
         libxml_use_internal_errors(true);
-        $result = $document->schemaValidate(__DIR__ .  '../pipeline_schema_definition.xsd');
+        $result = $document->schemaValidate(__DIR__ .  '/pipeline_schema_definition.xsd');
         if($result === false) {
             $validationErrors = array();
             $errors = libxml_get_errors();

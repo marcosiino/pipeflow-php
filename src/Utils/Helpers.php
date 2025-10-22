@@ -1,7 +1,7 @@
 <?php
-namespace marcosiino\pipeflow\Utils\Helpers;
+namespace Marcosiino\Pipeflow\Utils;
 
-use marcosiino\pipeflow\Exceptions\StageConfigurationException;
+use Marcosiino\Pipeflow\Exceptions\StageConfigurationException;
 
 class Helpers
 {

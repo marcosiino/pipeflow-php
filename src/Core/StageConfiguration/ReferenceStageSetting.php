@@ -1,6 +1,10 @@
 <?php
 
-namespace Pipeline\Core\StageConfiguration;
+namespace Marcosiino\Pipeflow\Core\StageConfiguration;
+
+use Marcosiino\Pipeflow\Core\PipelineContext;
+use Marcosiino\Pipeflow\Exceptions\PipelineExecutionException;
+use Marcosiino\Pipeflow\Utils\Helpers;
 
 class ReferenceStageSetting
 {

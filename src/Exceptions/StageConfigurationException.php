@@ -1,7 +1,7 @@
 <?php
-namespace marcosiino\pipeflow\Exceptions;
+namespace Marcosiino\Pipeflow\Exceptions;
 
-class StageConfigurationException extends Exception {
+class StageConfigurationException extends \Exception {
 
     /**
      * Returns a StageConfigurationException with ExpectedFieldNotFound message and code

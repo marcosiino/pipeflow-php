@@ -1,5 +1,5 @@
 <?php
-namespace marcosiino\pipeflow\Utils\Parser
+namespace Marcosiino\Pipeflow\Utils\Parser;
 
 /**
  * Parses the pipeline parameters inputs

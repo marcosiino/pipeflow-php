@@ -1,4 +1,5 @@
 <?php
+namespace Marcosiino\Pipeflow\Utils\Parser;
 
 enum ParsedElementSubType
 {

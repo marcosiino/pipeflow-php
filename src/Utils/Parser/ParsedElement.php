@@ -1,5 +1,5 @@
 <?php
-namespace marcosiino\pipeflow\Utils\Parser;
+namespace Marcosiino\Pipeflow\Utils\Parser;
 
 class ParsedElement {
 
@@ -12,14 +12,14 @@ class ParsedElement {
     /**
      * The type of the parsed element
      *
-     * @var \Pipeline\Utils\Parser\ParsedElementType
+     * @var Marcosiino\Pipeflow\Utils\Parser\ParsedElementType
      */
     public ParsedElementType $elementType;
 
     /**
      * The subtype (i.e. if the element contains [value], its an indexed subtype)
      *
-     * @var \Pipeline\Utils\Parser\ParsedElementType
+     * @var Marcosiino\Pipeflow\Utils\Parser\ParsedElementType
      */
     public ParsedElementSubType $elementSubType;
 

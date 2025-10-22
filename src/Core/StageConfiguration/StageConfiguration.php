@@ -1,7 +1,9 @@
 <?php
-namespace Pipeline\Core\StageConfiguration;
+namespace Marcosiino\Pipeflow\Core\StageConfiguration;
 
 use Marcosiino\Pipeflow\Utils\PlaceholderProcessor;
+use Marcosiino\Pipeflow\Exceptions\PipelineExecutionException;
+use Marcosiino\Pipeflow\Core\PipelineContext;
 
 class StageConfiguration
 {

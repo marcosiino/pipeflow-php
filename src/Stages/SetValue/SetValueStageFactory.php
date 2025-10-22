@@ -1,8 +1,10 @@
 <?php
-namespace marcosiino\pipeflow\Stages\SetValueStage;
-use marcosiino\pipeflow\Interfaces\AbstractStageFactory;
-use marcosiino\pipeflow\Utils\Helpers;
-use marcosiino\pipeflow\Core\StageConfiguration\StageConfiguration;
+namespace Marcosiino\Pipeflow\Stages\SetValue;
+
+use Marcosiino\Pipeflow\Interfaces\AbstractStageFactory;
+use Marcosiino\Pipeflow\Interfaces\AbstractPipelineStage;
+use Marcosiino\Pipeflow\Core\StageConfiguration\StageConfiguration;
+use Marcosiino\Pipeflow\Core\StageDescriptor;
 
 class SetValueStageFactory implements AbstractStageFactory
 {

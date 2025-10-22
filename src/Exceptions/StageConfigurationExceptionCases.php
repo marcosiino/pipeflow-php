@@ -1,5 +1,5 @@
 <?php
-namespace marcosiino\pipeflow\Exceptions;
+namespace Marcosiino\Pipeflow\Exceptions;
 
 enum StageConfigurationExceptionCases: int
 {

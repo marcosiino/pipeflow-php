@@ -1,8 +1,8 @@
 <?php
-namespace marcosiino\pipeflow\Interfaces;
+namespace Marcosiino\Pipeflow\Interfaces;
 
-use marcosiino\pipeflow\Core\PipelineContext;
-use marcosiino\pipeflow\Exceptions\PipelineExecutionException;
+use Marcosiino\Pipeflow\Core\PipelineContext;
+use Marcosiino\Pipeflow\Exceptions\PipelineExecutionException;
 
 /**
  * Represents an abstract PipelineStage

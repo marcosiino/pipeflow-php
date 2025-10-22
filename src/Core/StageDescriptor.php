@@ -1,5 +1,5 @@
 <?php
-namespace marcosiino\pipeflow\Core;
+namespace Marcosiino\Pipeflow\Core;
 
 /**
  * Represents the description of a specific pipeline stage type, with its identifier, inputs and outputs descriptions
@@ -117,7 +117,7 @@ class StageDescriptor
         if ($this->validateDictionary($params)) {
             $this->setupParameters = $params;
         } else {
-            throw new InvalidArgumentException("Setup parameters must be an associative array of string => string.");
+            throw new \InvalidArgumentException("Setup parameters must be an associative array of string => string.");
         }
     }
 
@@ -125,7 +125,7 @@ class StageDescriptor
         if ($this->validateDictionary($inputs)) {
             $this->contextInputs = $inputs;
         } else {
-            throw new InvalidArgumentException("Context Inputs must be an associative array of string => string.");
+            throw new \InvalidArgumentException("Context Inputs must be an associative array of string => string.");
         }
     }
 
@@ -133,7 +133,7 @@ class StageDescriptor
         if ($this->validateDictionary($outputs)) {
             $this->contextOutputs = $outputs;
         } else {
-            throw new InvalidArgumentException("Context Outputs must be an associative array of string => string.");
+            throw new \InvalidArgumentException("Context Outputs must be an associative array of string => string.");
         }
     }
 
