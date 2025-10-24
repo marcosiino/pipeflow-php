@@ -38,9 +38,12 @@ class PipelineXMLConfigurator
         //Validates the xml configuration
         $errors = array();
         if($this->validateXMLConfiguration($document, $errors) === true) {
-            $allStages = $document->documentElement->getElementsByTagName("stage");
-            foreach($allStages as $stage) {
-                $this->processStage($stage, $document);
+            // ✅ Use DOMXPath to select only the top-level <stage> elements
+            $xpath = new \DOMXPath($document);
+            $stages = $xpath->query('/pipeline/stages/stage');
+
+            foreach ($stages as $stageNode) {
+                $this->processStage($stageNode, $document);
             }
         } else {
             //TODO: don't print the errors, propagate them someway (exception?)
@@ -51,49 +54,58 @@ class PipelineXMLConfigurator
         return true;
     }
 
-    /**
+   /**
+     * Parses and configures a single <stage> element
+     *
      * @throws StageConfigurationException
      */
     private function processStage(\DOMElement $stage, \DOMDocument $document): void
     {
         $stageConfiguration = new StageConfiguration();
-
         $stageType = $stage->getAttribute("type");
-        $params = $stage->getElementsByTagName("param");
+
+        // ✅ Use XPath relative to this stage node
+        $xpath = new \DOMXPath($document);
+        $params = $xpath->query('./settings/param', $stage);
+
         foreach ($params as $param) {
             $paramName = $param->getAttribute("name");
-            $subItems = $param->getElementsByTagName("item");
+            $subItems = $xpath->query('./item', $param);
 
-            // Setting Parameter which references to the value of a Context Parameter.
-            if($contextReferenceType = $param->getAttribute("contextReference"))
-            {
-                if(count($subItems) > 0) {
-                    throw new StageConfigurationException("reference parameters (param with contextReference attribute) cannot have <item></item> sub elements");
+            // Reference parameter (contextReference)
+            if ($contextReferenceType = $param->getAttribute("contextReference")) {
+                if ($subItems->length > 0) {
+                    throw new StageConfigurationException(
+                        "Reference parameters (param with contextReference attribute) cannot have <item></item> sub elements"
+                    );
                 }
+
                 $keypath = $param->getAttribute("keypath");
                 $type = $this->getReferenceTypeFromTypeAttribute($contextReferenceType);
 
-                $stageConfiguration->addSetting(new ReferenceStageSetting($type, $paramName, $param->nodeValue, $keypath));
+                $stageConfiguration->addSetting(
+                    new ReferenceStageSetting($type, $paramName, trim($param->nodeValue), $keypath)
+                );
             }
-            // Fixed Setting Parameter
+            // Fixed value parameter
             else {
-                //If the param element has <item> sub elements, it means it is an array parameter
-                if(count($subItems) > 0) {
-                    $paramArray = array();
+                if ($subItems->length > 0) {
+                    // Parameter is an array
+                    $paramArray = [];
                     foreach ($subItems as $item) {
-                        $paramArray[] = $item->nodeValue;
+                        $paramArray[] = trim($item->nodeValue);
                     }
                     $stageConfiguration->addSetting(new StageSetting($paramName, $paramArray));
-                }
-                // Otherwise it is a single value parameter
-                else {
-                    $stageConfiguration->addSetting(new StageSetting($paramName, $param->nodeValue));
+                } else {
+                    // Single value parameter
+                    $stageConfiguration->addSetting(new StageSetting($paramName, trim($param->nodeValue)));
                 }
             }
         }
 
-        $stage = StageFactory::instantiateStageOfType($stageType, $stageConfiguration);
-        $this->pipeline->addStage($stage);
+        // Instantiate and add stage to pipeline
+        $stageInstance = StageFactory::instantiateStageOfType($stageType, $stageConfiguration);
+        $this->pipeline->addStage($stageInstance);
     }
 
     /**
