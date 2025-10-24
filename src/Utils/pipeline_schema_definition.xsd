@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- =============================== -->
+    <!--          SUPPORT TYPES          -->
+    <!-- =============================== -->
+
+    <!-- Allowed contextReference values -->
     <xsd:simpleType name="ContextReferenceType">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="plain"/>
@@ -8,62 +14,72 @@
         </xsd:restriction>
     </xsd:simpleType>
 
-    <xsd:element name="pipeline">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="stages" minOccurs="1" maxOccurs="1">
-                    <xsd:complexType>
-                        <xsd:sequence>
-                            <!-- Stage -->
-                            <xsd:element name="stage" minOccurs="1" maxOccurs="unbounded">
-                                <xsd:complexType>
-                                    <xsd:sequence>
-                                        <xsd:element name="settings" minOccurs="1" maxOccurs="1">
-                                            <xsd:complexType>
-                                                <xsd:sequence>
-                                                    <xsd:element name="param" minOccurs="0" maxOccurs="unbounded">
-                                                        <xsd:complexType mixed="true">
-                                                            <xsd:choice>
-                                                                <xsd:sequence>
-                                                                    <xsd:element name="item" type="xsd:anyType" minOccurs="0" maxOccurs="unbounded"/>
-                                                                </xsd:sequence>
-                                                            </xsd:choice>
-                                                            <xsd:attribute name="name" type="xsd:string"/>
-                                                            <xsd:attribute name="contextReference" type="ContextReferenceType" use="optional" />
-                                                            <xsd:attribute name="keypath" type="xsd:string" use="optional" />
-                                                        </xsd:complexType>
-                                                    </xsd:element>
-                                                </xsd:sequence>
-                                            </xsd:complexType>
-                                        </xsd:element>
-                                        <xsd:element name="then" minOccurs="0" maxOccurs="1">
-                                            <xsd:complexType>
-                                                <xsd:sequence>
-                                                    <xsd:element name="stage" minOccurs="0" maxOccurs="unbounded">
-                                                    </xsd:element>
-                                                </xsd:sequence>
-                                            </xsd:complexType>
-                                        </xsd:element>
-                                        <xsd:element name="else" minOccurs="0" maxOccurs="1">
-                                            <xsd:complexType>
-                                                <xsd:sequence>
-                                                    <xsd:element name="stage" minOccurs="0" maxOccurs="unbounded">
-                                                    </xsd:element>
-                                                </xsd:sequence>
-                                            </xsd:complexType>
-                                        </xsd:element>
-                                    </xsd:sequence>
-                                    <!-- stage id attribute -->
-                                    <xsd:attribute name="type" type="xsd:string" use="required"/>
-                                </xsd:complexType>
-                            </xsd:element>
-                            <!-- Stage -->
-                        </xsd:sequence>
-                    </xsd:complexType>
-                </xsd:element>
-            </xsd:sequence>
-            <!-- pipeline id attribute -->
-            <xsd:attribute name="id" type="xsd:string" use="required"/>
-        </xsd:complexType>
-    </xsd:element>
+    <!-- =============================== -->
+    <!--          STAGE STRUCTURE        -->
+    <!-- =============================== -->
+
+    <!-- A single <param> element inside <settings> -->
+    <xsd:complexType name="ParamType" mixed="true">
+        <xsd:sequence>
+            <!-- A parameter can optionally contain multiple <item> values -->
+            <xsd:element name="item" type="xsd:anyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+        <xsd:attribute name="contextReference" type="ContextReferenceType" use="optional"/>
+        <xsd:attribute name="keypath" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <!-- The <settings> block that holds multiple <param> elements -->
+    <xsd:complexType name="SettingsType">
+        <xsd:sequence>
+            <xsd:element name="param" type="ParamType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- A reusable type for any stage block (then, else, do, etc.) -->
+    <xsd:complexType name="StageBlockType">
+        <xsd:sequence>
+            <!-- Nested <stage> elements follow the same StageType definition -->
+            <xsd:element name="stage" type="StageType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- Recursive definition of a <stage> element -->
+    <xsd:complexType name="StageType">
+        <xsd:sequence>
+            <!-- Each stage must have a <settings> block -->
+            <xsd:element name="settings" type="SettingsType" minOccurs="1" maxOccurs="1"/>
+
+            <!-- Optional conditional or looping sub-blocks -->
+            <xsd:element name="then" minOccurs="0" maxOccurs="1" type="StageBlockType"/>
+            <xsd:element name="else" minOccurs="0" maxOccurs="1" type="StageBlockType"/>
+            <xsd:element name="do"   minOccurs="0" maxOccurs="1" type="StageBlockType"/>
+        </xsd:sequence>
+
+        <!-- Each stage must define its type (e.g., SetValue, If, ForEach...) -->
+        <xsd:attribute name="type" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <!-- =============================== -->
+    <!--         PIPELINE STRUCTURE      -->
+    <!-- =============================== -->
+
+    <!-- The <stages> container holds one or more <stage> elements -->
+    <xsd:complexType name="StagesType">
+        <xsd:sequence>
+            <xsd:element name="stage" type="StageType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- The root <pipeline> element -->
+    <xsd:complexType name="PipelineType">
+        <xsd:sequence>
+            <xsd:element name="stages" type="StagesType" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="required"/>
+    </xsd:complexType>
+
+    <!-- Root element definition -->
+    <xsd:element name="pipeline" type="PipelineType"/>
+
 </xsd:schema>
