@@ -36,6 +36,22 @@
                                                 </xsd:sequence>
                                             </xsd:complexType>
                                         </xsd:element>
+                                        <xsd:element name="then" minOccurs="0" maxOccurs="1">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="stage" minOccurs="0" maxOccurs="unbounded">
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="else" minOccurs="0" maxOccurs="1">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="stage" minOccurs="0" maxOccurs="unbounded">
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
                                     </xsd:sequence>
                                     <!-- stage id attribute -->
                                     <xsd:attribute name="type" type="xsd:string" use="required"/>

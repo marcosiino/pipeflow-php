@@ -8,6 +8,7 @@ use Marcosiino\Pipeflow\Core\StageConfiguration\ReferenceStageSetting;
 use Marcosiino\Pipeflow\Exceptions\StageConfigurationException;
 use Marcosiino\Pipeflow\Core\StageFactory;
 use Marcosiino\Pipeflow\Core\StageConfiguration\ReferenceStageSettingType;
+use Marcosiino\Pipeflow\Interfaces\AbstractPipelineStage;
 
 /**
  *
@@ -34,16 +35,17 @@ class PipelineXMLConfigurator
     public function configure($xmlConfiguration): bool {
         $document = new \DOMDocument();
         $document->loadXML($xmlConfiguration);
+        $xpath = new \DOMXPath($document);
 
         //Validates the xml configuration
         $errors = array();
         if($this->validateXMLConfiguration($document, $errors) === true) {
             // ✅ Use DOMXPath to select only the top-level <stage> elements
-            $xpath = new \DOMXPath($document);
             $stages = $xpath->query('/pipeline/stages/stage');
 
             foreach ($stages as $stageNode) {
-                $this->processStage($stageNode, $document);
+                $instantiatedStage = $this->processStage($stageNode, $xpath);
+                $this->pipeline->addStage($instantiatedStage);
             }
         } else {
             //TODO: don't print the errors, propagate them someway (exception?)
@@ -54,20 +56,19 @@ class PipelineXMLConfigurator
         return true;
     }
 
+
    /**
      * Parses and configures a single <stage> element
      *
      * @throws StageConfigurationException
      */
-    private function processStage(\DOMElement $stage, \DOMDocument $document): void
+    private function processStage(\DOMElement $stage, \DOMXPath $xpath): AbstractPipelineStage
     {
         $stageConfiguration = new StageConfiguration();
         $stageType = $stage->getAttribute("type");
 
-        // ✅ Use XPath relative to this stage node
-        $xpath = new \DOMXPath($document);
+        // ** Parsing settings parameters **
         $params = $xpath->query('./settings/param', $stage);
-
         foreach ($params as $param) {
             $paramName = $param->getAttribute("name");
             $subItems = $xpath->query('./item', $param);
@@ -103,9 +104,29 @@ class PipelineXMLConfigurator
             }
         }
 
-        // Instantiate and add stage to pipeline
+        // Instantiate the stage
         $stageInstance = StageFactory::instantiateStageOfType($stageType, $stageConfiguration);
-        $this->pipeline->addStage($stageInstance);
+
+        // ** Parsing sub stages blocks (like then, else, etc) **        
+        // Stage's child elements excluding <settings>
+        $childBlocks = $xpath->query('./*[not(self::settings)]', $stage);
+        foreach ($childBlocks as $blockNode) {
+            // Finds all <stage> elements inside the block
+            $blockStages = $xpath->query('./stage', $blockNode);
+
+            if ($blockStages->length > 0) {
+                $stagesArray = [];
+                foreach ($blockStages as $innerStage) {
+                     // Process the inner stage and return an instantiated AbstractPipelineStage which is added to the stages array
+                    $stagesArray[] = $this->processStage($innerStage, $xpath);
+                }
+
+                // Add the sub stages block to the stage instance
+                $stageInstance->addSubStagesBlock($blockNode->nodeName, $stagesArray);
+            }
+        }
+
+        return $stageInstance;
     }
 
     /**

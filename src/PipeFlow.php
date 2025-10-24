@@ -19,5 +19,6 @@ class PipeFlow
         StageFactory::registerFactory(new Stages\RandomValue\RandomValueStageFactory());
         StageFactory::registerFactory(new Stages\SetValue\SetValueStageFactory());
         StageFactory::registerFactory(new Stages\SumOperation\SumOperationStageFactory());
+        StageFactory::registerFactory(new Stages\If\IfStageFactory());
     }
 }
