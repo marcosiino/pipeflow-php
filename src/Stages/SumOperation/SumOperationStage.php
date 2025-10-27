@@ -21,29 +21,34 @@ class SumOperationStage extends AbstractPipelineStage
         $operandB = $this->stageConfiguration->getSettingValue("operandB", $context, true);
         $resultParameter = $this->stageConfiguration->getSettingValue("resultTo", $context, false, "SUM_RESULT");
 
-        //Both operands are scalars
-        if(!is_array($operandA) && !is_array($operandB)) {
-            if(is_string($operandA) || is_string($operandB)) {
-                // A concatenation is performed
-                $context->setParameter($resultParameter, $operandA . $operandB);
-            }
-            else {
-                // A sum is performed
-                $context->setParameter($resultParameter, $operandA + $operandB);
+        // --- 1) Both operands are NOT arrays: handle numeric vs string ---
+        if (!is_array($operandA) && !is_array($operandB)) {
+
+            // If *both* operands are numeric-like (int/float or numeric strings) => perform numeric sum
+            if ($this->isNumericLike($operandA) && $this->isNumericLike($operandB)) {
+                // Explicit numeric cast: in PHP, $x + 0 safely forces numeric type
+                $a = $operandA + 0;
+                $b = $operandB + 0;
+
+                // If both are int-like you may return int, otherwise float (optional)
+                $context->setParameter($resultParameter, $a + $b);
+            } else {
+                // Otherwise, fallback: string concatenation (intended behavior)
+                $context->setParameter($resultParameter, (string)$operandA . (string)$operandB);
             }
         }
-        //Both operands are arrays
-        else if(is_array($operandA) && is_array($operandB)) {
+
+        // --- 2) Both operands are arrays: merge preserving numeric keys at the end ---
+        else if (is_array($operandA) && is_array($operandB)) {
             $context->setParameter($resultParameter, array_merge($operandA, $operandB));
         }
-        //operandA is an array and the operandB is a scalar: adds operandB to the array in operandA
-        else if(is_array($operandA) && !is_array($operandB)) {
+
+        // --- 3) One operand is an array and the other is scalar: push scalar to array ---
+        else if (is_array($operandA) && !is_array($operandB)) {
             $result = $operandA;
             $result[] = $operandB;
             $context->setParameter($resultParameter, $result);
-        }
-        //operandB is an array and the operandA is a scalar: adds operandB to the array in operandA
-        else if(is_array($operandB) && !is_array($operandA)) {
+        } else if (is_array($operandB) && !is_array($operandA)) {
             $result = $operandB;
             $result[] = $operandA;
             $context->setParameter($resultParameter, $result);
@@ -51,4 +56,24 @@ class SumOperationStage extends AbstractPipelineStage
 
         return $context;
     }
+
+    /**
+     * Returns true if the value is a number or a valid numeric string (whitespace allowed).
+     * Prevents treating null/array/object/bool as numbers.
+     */
+    private function isNumericLike($value): bool
+    {
+        if (is_int($value) || is_float($value)) {
+            return true;
+        }
+        if (!is_string($value)) {
+            return false; // exclude null, bool, array, object
+        }
+        $s = trim($value);
+        if ($s === '') {
+            return false;
+        }
+        return is_numeric($s); // also recognizes "2", "2.5", "-3", "2e3"
+    }
+
 }
