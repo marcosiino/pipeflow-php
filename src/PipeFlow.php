@@ -13,6 +13,7 @@ class PipeFlow
         StageFactory::registerFactory(new Stages\ArrayPath\ArrayPathStageFactory());
         StageFactory::registerFactory(new Stages\Delay\DelayStageFactory());
         StageFactory::registerFactory(new Stages\ExplodeString\ExplodeStringStageFactory());
+        StageFactory::registerFactory(new Stages\For\ForStageFactory());
         StageFactory::registerFactory(new Stages\ForEach\ForEachStageFactory());
         StageFactory::registerFactory(new Stages\JSONEncode\JSONEncodeStageFactory());
         StageFactory::registerFactory(new Stages\JSONDecode\JSONDecodeStageFactory());
