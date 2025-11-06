@@ -164,7 +164,7 @@ Use `StageFactory::registerFactory()` to attach custom factories, and `StageFact
 - A `StageSetting` (fixed value defined in XML or code), or
 - A `ReferenceStageSetting` (value read dynamically from the context at runtime).
 
-`StageConfiguration::getSettingValue($name, $context, $required, $default)` resolves the final value and performs placeholder expansion when appropriate.
+`StageConfiguration::getSettingValue($name, $context, $required, $default)` resolves the final value and performs placeholder expansion when appropriate, or if the parameter is a `contextReference` (see [Referencing Context Data](#referencing-context-data)), this function automatically resolves the reference and returns it's value by using the provided `$context`.
 
 ## Referencing Context Data
 Stages often need to consume values that were produced earlier in the pipeline. Pipeflow provides two complementary approaches.
@@ -186,16 +186,18 @@ Example:
 If the context contains `user_name = 'Marco'`, the resolved value becomes `"Hello Marco!"`.
 
 ### Context References (`contextReference`)
-For non-string values (arrays, numbers) and to avoid placeholder syntax altogether, use the `contextReference` attribute inside `<param>`:
+In some cases it's better to reference context parameters within stages using the `contextReference` attribute inside `<param>`:
 
 ```xml
 <param name="jsonString" contextReference="plain">raw_json</param>
 ```
 
-At runtime this becomes a `ReferenceStageSetting` (`src/Core/StageConfiguration/ReferenceStageSetting.php`). Available reference types (see `ReferenceStageSettingType.php`):
+In the example below, the parameter `jsonString` of the stage is set with the value contained inside the raw_json context parameter (supposing it has been set previously by another stage). At runtime this becomes a `ReferenceStageSetting` (`src/Core/StageConfiguration/ReferenceStageSetting.php`).
+
+Available reference types (see `ReferenceStageSettingType.php`):
 
 - `plain` &mdash; inject the entire value of the referenced context parameter.
-- `keypath` &mdash; select a nested key inside an array using dot-notation.
+- `keypath` &mdash; select a nested key inside an array using dot-notation (See [Key Paths for Nested Structures](#key-paths-for-nested-structures))
 - `last` &mdash; retrieve the last element of an array.
 
 Programmatic usage mirrors the XML form:
