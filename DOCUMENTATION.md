@@ -1,6 +1,6 @@
 # Pipeflow PHP Library Documentation
 
-**Note:** the following documentation has been written and is mantained with the support of the AI. Please report me if you encounter any error in the documentation instructions so that I can fix it manually.
+**Note:** The following documentation has been written and is maintained with the support of AI. Please report any errors you encounter in the documentation instructions so that I can fix them manually.
 
 ## Table of Contents
 - [Introduction](#introduction)
