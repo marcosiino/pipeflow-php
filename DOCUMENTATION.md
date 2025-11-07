@@ -1,5 +1,7 @@
 # Pipeflow PHP Library Documentation
 
+**Note:** the following documentation has been written and is mantained with the support of the AI. Please report me if you encounter any error in the documentation instructions so that I can fix it manually.
+
 ## Table of Contents
 - [Introduction](#introduction)
   - [Why Pipeflow?](#why-pipeflow)
@@ -217,12 +219,12 @@ $config->addSetting(new ReferenceStageSetting(
 Key paths are dot-separated strings resolved through `Helpers::getArrayItemAtPath()` (`src/Utils/Helpers.php`). Example:
 
 ```xml
-<param name="parameterValue" contextReference="keypath" keypath="data.2.attributes.details">
+<param name="exampleInputParam" contextReference="keypath" keypath="data.2.attributes.details">
   decoded_payload
 </param>
 ```
 
-Given a context parameter `decoded_payload` that stores a nested associative array, Pipeflow navigates the path (`data ➝ 2 ➝ attributes ➝ details`) and injects the final nested structure.
+Given a context parameter `decoded_payload` that stores a nested associative array, Pipeflow navigates the path (`data ➝ 2 ➝ attributes ➝ details`) and injects the final nested structure in the stage input parameter `exampleInputParam`
 
 If a key path does not exist, the engine raises a `PipelineExecutionException` so you can fail fast and surface a clear error.
 
@@ -230,7 +232,7 @@ If a key path does not exist, the engine raises a `PipelineExecutionException` s
 You can combine references and placeholders to compose complex values:
 
 ```xml
-<!-- Extract a nested array and loop over it -->
+<!-- Extract a nested array -->
 <param name="collection" contextReference="keypath" keypath="items.active">feed</param>
 
 <!-- Capture the last element of a list -->
@@ -243,16 +245,16 @@ You can combine references and placeholders to compose complex values:
 When you need to pass literal arrays from XML, wrap values in `<item>` elements. Example, to configure a `SetValue` stage with a predefined list:
 
 ```xml
-<param name="parameterValue">
+<param name="exampleInputParam">
   <item>pending</item>
   <item>processing</item>
   <item>completed</item>
 </param>
 ```
 
-`StageConfiguration` preserves these lists as PHP arrays.
+`StageConfiguration` preserves these lists as PHP arrays and pass this array to the `exampleInputParam` input parameter of the stage
 
-## Configuring Pipelines in PHP
+## Configuring Pipelines programmatically in PHP
 Construct pipelines programmatically when you need full control or dynamic wiring:
 
 1. Instantiate `Pipeline` with an optional starting `PipelineContext`.
@@ -275,41 +277,57 @@ use Marcosiino\Pipeflow\Core\StageConfiguration\ReferenceStageSettingType;
 $pipeline = new Pipeline();
 PipeFlow::registerStages();
 
-// Seed the context with data
+// Seed the context with data by setting a context parameter order_ids with an array of order ids
 $pipeline->getCurrentContext()->setParameter('order_ids', [101, 102, 103]);
 
-// Count items
+// Use the ArrayCount stage to count the items of the array by storing the count in the orders_count context parameter
 $countConfig = new StageConfiguration();
 $countConfig->addSetting(new StageSetting('arrayParameterName', 'order_ids'));
 $countConfig->addSetting(new StageSetting('resultTo', 'orders_count'));
 $pipeline->addStage(StageFactory::instantiateStageOfType('ArrayCount', $countConfig));
 
-// Iterate over each order ID
-$loopConfig = new StageConfiguration();
-$loopConfig->addSetting(new ReferenceStageSetting(
-    ReferenceStageSettingType::plain,
-    'collection',
-    'order_ids'
-));
-$forEach = StageFactory::instantiateStageOfType('ForEach', $loopConfig);
-$pipeline->addStage($forEach);
-
-$pipeline->execute();
+$output_context = $pipeline->execute();
+//$output_context will contain the following context parameters: order_ids and order_counts
 ```
 
 Control-flow stages (`If`, `ForEach`, `For`) accept nested stages programmatically by calling `addSubStagesBlock($blockName, $stagesArray)` defined in `AbstractPipelineStage`.
 
 ## Configuring Pipelines with XML
-XML configuration is perfect when non-developers (or configuration tooling) should edit workflows. The `PipelineXMLConfigurator` (`src/Utils/PipelineXMLConfigurator.php`) parses XML into `StageConfiguration` instances, validates the structure against an XSD, and wires sub-stage blocks automatically.
+XML configuration is the cleareast way to configure pipelines because, using custom defined xml nodes, you can better understand "visually" the structure of the pipeline and it's stage compared to configuring it programmatically. This allows also non-developers to configure or edit pipelines. 
+The `PipelineXMLConfigurator` (`src/Utils/PipelineXMLConfigurator.php`) parses XML into `StageConfiguration` instances, validates the structure against an XSD, and wires sub-stage blocks automatically.
 
 ### XML Schema Essentials
 The schema lives in `src/Utils/pipeline_schema_definition.xsd`. Key rules:
 
-- Root element: `<pipeline id="...">` containing a single `<stages>` block.
-- Each `<stage>` must declare a `type` attribute and a `<settings>` child.
-- `<settings>` includes one or more `<param>` elements. Use `<item>` to express arrays.
-- Control-flow stages can declare `<then>`, `<else>`, and `<do>` blocks containing nested `<stage>` elements.
+- Root element: `<pipeline id="...">` containing a single `<stages>` block. The pipeline id can be whatever you want.
+- Each `<stage>` must declare a `type` attribute (which corresponds to the stage identifier. See [Stage Catalogue](#stage-catalogue) for all the available stage types) and a `<settings>` child.
+- `<settings>` includes one or more `<param>` elements, which are the stage input parameters. Use `<item>` sub nodes to express arrays.
+- Control-flow stages can declare `<then>`, `<else>`, and `<do>` blocks containing nested `<stage>` elements. See [Control-Flow Stages](#control-flow-stages) for more info.
 - `contextReference` accepts `plain`, `keypath`, or `last`.
+
+Following an example of a pipeline typical xml configuration:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<pipeline id="example-pipeline">
+  <stages>
+    <stage type="StageIdentifier">
+      <settings>
+        <param name="inputParam1">example vValue</param> <!-- example input -->
+        <param name="inputParam2">another example value</param> <!-- example input -->
+        <param name="resultTo">outputParam1</param> <!-- the name of the context parameter to which to store the output of the stage -->
+      </settings>
+    </stage>
+    <stage type="AnotherStageIdentifier">
+      <settings>
+        <param name="inputParam1" contextReference="plain">outParam1</param> <!-- example input set to the value of the output of the previous stage -->
+        <param name="inputParam2">hello world</param> <!-- another example input -->
+        <param name="resultTo">finalOutput</param> <!-- the output of this stage is set to finalOutput context parameter -->
+      </settings>
+    </stage>
+  </stages>
+</pipeline>
+```
 
 ### Executing an XML Pipeline
 
@@ -320,16 +338,21 @@ use Marcosiino\Pipeflow\PipeFlow;
 PipeFlow::registerStages();
 $pipeline = new Pipeline();
 $xml = file_get_contents('pipeline.xml');
-$pipeline->setupWithXML($xml); // Validates against the bundled XSD
+$pipeline->setupWithXML($xml); // Validates against the bundled XSD, instantiates and configures the stages
+//...
 $result = $pipeline->execute();
+$result //is contains the processed context with all the context parameters set by the pipeline
 ```
 
 Validation errors are collected and reported by `PipelineXMLConfigurator::validateXMLConfiguration()`. Ensure libxml errors are enabled (the configurator manages this automatically).
 
-## Control-Flow Stages
+## Stage Catalogue
+Below is the full list of built-in stages registered by `PipeFlow::registerStages()` (`src/PipeFlow.php`). Each entry includes description, parameters, and examples.
+
+### Control-Flow Stages
 Control-flow stages are the backbone of Pipeflow's DSL. They evaluate conditions, branch execution, or repeat sub-stages.
 
-### `If` Stage
+#### `If` Stage
 - **Purpose**: Conditionally execute `then` or `else` blocks based on a comparison (`equal`, `notEqual`, `greater`, `less`, `greaterOrEqual`, `lessOrEqual`, `contains`, `notContains`, `caseInsensitiveContains`, `caseInsensitiveNotContains`).
 - **Allowed sub-blocks**: `<then>`, `<else>`.
 
@@ -379,7 +402,7 @@ $ifStage->addSubStagesBlock('else', [$fallbackStage]);
 $pipeline->addStage($ifStage);
 ```
 
-### `ForEach` Stage
+#### `ForEach` Stage
 - **Purpose**: Iterate over an array and execute the `do` block for each item. During iteration the context exposes `currentItem` and `currentItem_index`.
 - **Allowed sub-blocks**: `<do>`.
 
@@ -416,7 +439,7 @@ $forEachStage->addSubStagesBlock('do', [$processProductStage]);
 $pipeline->addStage($forEachStage);
 ```
 
-### `For` Stage
+#### `For` Stage
 - **Purpose**: Execute a classic counted loop from `from` (inclusive) to `to` (exclusive) with a configurable `step`. The current index is stored in the context (default `currentIndex`).
 - **Allowed sub-blocks**: `<do>`.
 
@@ -458,9 +481,6 @@ $forStage = StageFactory::instantiateStageOfType('For', $forConfig);
 $forStage->addSubStagesBlock('do', [$someStage]);
 $pipeline->addStage($forStage);
 ```
-
-## Stage Catalogue
-Below is the full list of built-in stages registered by `PipeFlow::registerStages()` (`src/PipeFlow.php`). Each entry includes description, parameters, and examples.
 
 ### ArrayCount
 - **Identifier**: `ArrayCount`
@@ -746,13 +766,15 @@ $stage = StageFactory::instantiateStageOfType('SumOperation', $config);
 ```
 
 ## Creating Custom Stages
-Extend Pipeflow by implementing new stages:
+You can extend Pipeflow by implementing new stages which performs custom "piece" of work and interacts with the other stages to perform complex composable jobs. Custom stages could, for example, perform api calls, interacts with an ecommerce features (for example fetching or saving orders, user feedbacks, products...), or with wordpress elements (fetching/creating posts, comments, saving images, etc...), or even calling generative AI apis to perform text completions, ai image generation tasks, etc... all withing a pipeline!
 
-1. **Create the stage class**
+1. **Create the concrete Stage class**
+
+This is the core class of the stage.
+
    - Extend `AbstractPipelineStage`.
    - Accept a `StageConfiguration` in the constructor.
-   - Implement `execute()` and return the mutated `PipelineContext`.
-   - Optionally define allowed sub-stage blocks by setting `$allowedSubStagesBlocks`.
+   - Implement `execute()` and return the mutated `PipelineContext`. This is the core of the stage, where you take the input parameters, perform the operations the stage is designed to do, then access and manipulate the current context by writing the stage output there, that will be available to any other subsequent stage that will want to use it.
 
 ```php
 use Marcosiino\Pipeflow\Interfaces\AbstractPipelineStage;
@@ -772,13 +794,16 @@ class WPFetchPostsStage extends AbstractPipelineStage
     {
         $status = $this->config->getSettingValue('status', $context, false, 'publish');
         $posts = get_posts(['post_status' => $status]);
+        // ...
         $context->setParameter('wp_posts', $posts);
         return $context;
     }
 }
 ```
 
-2. **Create a factory**
+2. **Create the concrete Stage factory**
+
+The purpose of the stage factory is to instantiate the concrete stage class by decoupling it from the rest of the architecture, and to define the stage requirements by returning a StageDescriptor (which is something like the "manifest" of the stage)
 
 ```php
 use Marcosiino\Pipeflow\Interfaces\AbstractStageFactory;
@@ -813,16 +838,17 @@ use Marcosiino\Pipeflow\Core\StageFactory;
 StageFactory::registerFactory(new WPFetchPostsStageFactory());
 ```
 
-Once registered, the stage becomes available to both PHP and XML pipelines. This approach makes it easy to integrate WooCommerce, ACF, third-party APIs, or any bespoke business logic into your automation flows.
+Once registered, the stage becomes available to both PHP and XML pipelines. This approach makes it easy to integrate e-commerces, wordpress features, third party apis, or any bespoke custom business logic or third party systems into your automation flows.
 
 ## Troubleshooting & Diagnostics
+
 - **Missing factory**: `StageFactory::instantiateStageOfType()` throws `StageConfigurationException::invalidStageTypeIdentifier()` if a factory is not registered. Ensure `PipeFlow::registerStages()` (and custom factories) execute before parsing the pipeline.
 - **Context lookups**: When a `contextReference` points to a missing key, `StageConfiguration::getSettingValue()` raises a `PipelineExecutionException`. Confirm earlier stages populate the required values.
 - **XML validation**: If `setupWithXML()` fails, validation errors are printed via `PipelineXMLConfigurator`. Fix the XML according to the XSD schema.
 
-## Next Steps
+## Example use cases for custom stages
+
 - **Automate WordPress tasks**: wire Pipeflow inside a plugin, schedule pipelines via WP Cron, and build custom stages that wrap WP, WooCommerce, or third-party plugin APIs.
-- **Expand the catalogue**: implement stages for HTTP requests, database CRUD, or messaging queues.
-- **Observability**: leverage `Pipeline::getCurrentContext()` (or extend the engine) to log context snapshots between stages for debugging.
+- **Expand the catalogue**: implement stages that is not available in the core library (or if it is a "generic" stage which could fit in the core stage catalogue, and you want to contribute with the project, you can implement as part of the core stages and make a PR to ask me to merge your work into the library!)
 
 Pipeflow provides the scaffolding; the value comes from composing the right stages for your business logic. Happy building!
