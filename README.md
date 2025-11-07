@@ -56,3 +56,8 @@ Pipeflow ships with a catalogue of built-in stages, but you can register your ow
 ## Contribute to Pipeflow
 Pipeflow thrives on community input. Whether you want to improve the core engine, add new built-in stages, or share feedback from real-world deployments, we would love to collaborate. Check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting issues, proposing ideas, and submitting pull requests.
 
+## Learn more
+The full reference, including installation instructions, control-flow stages, and detailed stage catalogue, lives in [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## License
+Pipeflow is distributed under the permissive [BSD 3-Clause License](LICENSE), which keeps the project friendly for both open-source and commercial use while encouraging community contributions.
