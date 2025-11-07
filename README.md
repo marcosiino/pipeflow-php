@@ -50,3 +50,6 @@ Pipeflow thrives on community input. Whether you want to improve the core engine
 
 ## Learn more
 The full reference, including installation instructions, control-flow stages, and detailed stage catalogue, lives in [DOCUMENTATION.md](DOCUMENTATION.md).
+
+## License
+Pipeflow is distributed under the permissive [MIT License](LICENSE), which keeps the project friendly for both open-source and commercial use while encouraging community contributions.
