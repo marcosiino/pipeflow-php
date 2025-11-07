@@ -9,7 +9,7 @@ Thanks for your interest in improving Pipeflow! We welcome contributions from th
 - **Enhance the core** – Optimise performance, improve developer ergonomics, or fix defects in the pipeline engine itself.
 
 ## Getting started
-1. Fork the repository and create a topic branch from `main`.
+1. Fork the repository and create a topic branch from `develop`.
 2. Install dependencies via `composer install`.
 3. Make your changes, keeping the code style consistent with the existing project.
 4. Add or update tests where appropriate and run the full test suite.
