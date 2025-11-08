@@ -5,17 +5,19 @@ Each stage receives a shared context, performs a focused unit of work, and retur
 
 In other words Pipeflow library gives you the instruments to instantiate one or more pipelines from an xml configuration, providing starting data in an initial context (optionally), and execute them when you want. What you will need to do is use these instruments in your web application to allow your actors to: edit the pipeline's configurations xml (via a text editor), save the pipeline xml configuration somewhere (e.g. your application db), and, when your application need to start a pipeline (manually or through a cron), just load the xml, feed it in the Pipeline class instance, and launch it.
 
-[Why Pipeflow matters](#why-pipeflow-matters)
-[Real Use Cases](#real-use-cases)
-[Other example use cases](#other-example-use-cases)
-[Installation and Documentation](#installation-and-documentation)
-[Quick introduction to pipelines](#quick-introduction-to-pipelines)
-  [Configuring with XML](#configuring-with-xml)
-  [Configuring programmatically via PHP](#configuring-programmatically-via-php)
-[Extending with custom stages](#extending-with-custom-stages)
-[Learn more](#learn-more)
-[Contribute to PipeFlow](#contribute-to-pipeflow)
-[License](#license)
+## Table of Contents
+
+- [Why Pipeflow matters](#why-pipeflow-matters)
+- [Real Use Cases](#real-use-cases)
+- [Other example use cases](#other-example-use-cases)
+- [Installation and Documentation](#installation-and-documentation)
+- [Quick introduction to pipelines](#quick-introduction-to-pipelines)
+  - [Configuring with XML](#configuring-with-xml)
+  - [Configuring programmatically via PHP](#configuring-programmatically-via-php)
+- [Extending with custom stages](#extending-with-custom-stages)
+- [Learn more](#learn-more)
+- [Contribute to PipeFlow](#contribute-to-pipeflow)
+- [License](#license)
 
 ## Why Pipeflow matters
 - **Human-friendly configuration** – describe automations in an XML document that business users and developers alike can read, review, and edit safely.
